@@ -8,8 +8,8 @@ and its config straight from mainnet bytes, then explains the launch in plain te
 - **Price:** the current price, the starting price, and the price at which it migrates.
 - **Fees:** the base fee schedule (flat, linear or exponential scheduler, or rate limiter), the dynamic fee, which token
   fees are collected in, and the split between protocol, partner and creator.
-- **Migration:** the target (DAMM v1 or v2), the post-migration pool fee tier, any migration fee, how LP is divided and
-  locked after migration, and any locked vesting.
+- **Migration:** the target (DAMM v1 or v2), the post-migration pool fee tier, the quote-threshold migration fee, the
+  protocol liquidity migration fee, how LP is divided and locked after migration, and any locked or LP vesting.
 - **Token:** program (SPL or Token-2022), decimals, supply, mint and freeze authority, and who can update metadata.
 - **Curve:** each segment's price boundary.
 
@@ -61,7 +61,8 @@ DBC pool 8QGizJP4ebiJbMKnbqWNDBjN3XSbZQMgEpA3mjhBFvK8  (slot 455904786, confirme
   price     now 0.00000685703 USDC; started 0.00000300007; migrates at 0.0000450011
   fees      flat 200 bps (no decay periods); dynamic fee off; collected in quote token only
             split: protocol 20%, then partner 100% / creator 0%
-  migrates  to DAMM v2; post-migration pool fee 200 bps (fixed 2% tier); migration fee 0% of quote (creator share 0%)
+  migrates  to DAMM v2; post-migration pool fee 200 bps (fixed 2% tier)
+            quote-threshold fee 0% (creator share 0%); protocol liquidity migration fee 20 bps
             LP after migration: partner 0% (+100% locked), creator 0% (+0% locked)
   curve     2 segment(s); config version 0
   unknowns  none
@@ -86,8 +87,9 @@ not a DBC pool: account owner TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA is not
   the 8-byte account discriminator, and the minimum size are checked before decoding.
 - The pool, its config, and both mints are read at one slot, so the report is internally consistent.
 - `migration_fee_option` is the graduated DAMM pool's fee tier, per the SDK's "Graduated DAMM Pool Config Keys". Only
-  the customizable tier uses `migrated_pool_fee_bps`. The migration fee (`migration_fee_percentage`) is reported
-  separately.
+  the customizable tier uses `migrated_pool_fee_bps`. `migration_fee_percentage` is a separate quote-threshold fee.
+  `protocol_liquidity_migration_fee_bps` on the pool is the protocol's cut of liquidity at migration (SDK
+  `getProtocolMigrationFee`), in basis points, not a percent of the quote threshold.
 - Fixtures under `fixtures/` are raw finalized account bytes (base64) for two live mainnet pools, one quoted in SOL and
   one in USDC, with the slot and an endpoint label; no endpoint URL is stored. Recapture with
   `DBC_RPC_URL=... node bin/capture-fixture.mjs <pool> <out.json> <label>`.
@@ -103,6 +105,8 @@ not a DBC pool: account owner TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA is not
 | Prices | Match the SDK's `getPriceFromSqrtPrice` for both pools (offline test) |
 | Migration progress names | Order from the program source, `state/virtual_pool.rs` `enum MigrationProgress`; only state 0 (on the curve) is present in the fixtures |
 | Flat base fee | Both live pools |
+| Protocol liquidity migration fee | 20 bps on both fixture pools, from `protocol_liquidity_migration_fee_bps` |
+| Locked and LP vesting | Both fixtures are unset (reported null). Cliff duration and partner/creator LP vesting are covered by synthetic configs |
 | Linear and exponential fee schedules | The ending fee is computed by the SDK's own scheduler; tested on synthetic configs, not on a live pool |
 | Rate limiter | Parameter names follow the SDK's `FeeRateLimiter` constructor; not exercised on a live pool |
 | Refusals | Token mint, DBC config passed as a pool, truncated bytes, mismatched config, out-of-range enum |

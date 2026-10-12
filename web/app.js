@@ -61,7 +61,9 @@ function renderReport(report, source) {
     fieldCard("Launch state", state.migration_progress.name, state.is_migrated ? "Migration recorded" : "On-chain pool state"),
     fieldCard("Base fee", `${fees.base_fee.starting_fee_bps} bps`, `${fees.base_fee.mode.name ?? "Unknown mode"} · dynamic fee ${fees.dynamic_fee.enabled ? "on" : "off"}`),
     fieldCard("Migration", migration.target.name, `Graduated pool fee ${migration.post_migration_pool_fee.bps ?? "unknown"} bps`),
+    fieldCard("Migration fees", `${migration.migration_fee.protocol_liquidity_fee_bps} bps protocol liquidity`, `Quote-threshold fee ${migration.migration_fee.percent_of_quote}% · creator share ${migration.migration_fee.creator_share_percent}%`),
     fieldCard("Liquidity locks", `${migration.liquidity_after_migration.partner_permanently_locked_percent}% partner`, `${migration.liquidity_after_migration.creator_permanently_locked_percent}% creator permanently locked`),
+    fieldCard("Vesting", [migration.locked_vesting, migration.partner_liquidity_vesting, migration.creator_liquidity_vesting].filter(Boolean).length ? "Configured" : "None configured", `Locked token schedule · partner LP · creator LP`),
     fieldCard("Token authorities", token.mint_authority ? "Mint authority present" : "Mint authority revoked", token.freeze_authority ? "Freeze authority present" : "Freeze authority revoked"),
     fieldCard("Token supply", token.supply_now, `${token.program} · ${token.decimals} decimals`),
     fieldCard("Curve", `${report.curve.length} segment${report.curve.length === 1 ? "" : "s"}`, `${fees.collect_fee_mode.name ?? "Unknown collection mode"} · ${fees.split.of_remainder.creator_percent}% creator share of remainder`),
@@ -104,7 +106,7 @@ function renderIcelan(report) {
   container.append(stack(
     fieldCard("Total minted supply", report.supply, `${report.decimals} decimals`, true),
     fieldCard("Rewards vault balance", report.vault.balance, "Tokens held in the recorded vault account"),
-    fieldCard("Authorities", "Revoked", `Mint: ${report.mint_authority ?? "none"} · Freeze: ${report.freeze_authority ?? "none"}`),
+    fieldCard("Authorities", report.mint_authority || report.freeze_authority ? "Present" : "Revoked", `Mint: ${report.mint_authority ?? "none"} · Freeze: ${report.freeze_authority ?? "none"}`),
   ));
   const accounts = node("div", "result-meta"); const content = node("div");
   content.append(node("strong", "", "On-chain sources"), node("small", "", "Mint and vault token account, read at one slot"));
