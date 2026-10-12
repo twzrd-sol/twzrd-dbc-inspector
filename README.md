@@ -15,17 +15,36 @@ and its config straight from mainnet bytes, then explains the launch in plain te
 
 Anything it cannot decode is reported under `unknowns` with the reason; it never guesses. Built during Crypto World's Fair in October 2026.
 
+The browser review adds three workflows: inspect a live DBC pool, compare the configured rules of two pools, and read
+the existing ICELAN mint and rewards vault as a clearly separate SPL-token example. Reports include the mainnet slot
+and links to the accounts behind them. JSON can be downloaded from the pool view.
+
 ## Use
 
 ```bash
 npm ci
 npm test                                   # offline: decodes recorded mainnet fixtures
+npm start                                  # browser review at http://127.0.0.1:4173
+npm run build:site                         # build the standalone Sites Worker artifact
 
 DBC_RPC_URL=<solana mainnet rpc> node bin/dbc-inspect.mjs <pool-address>          # readable card
 DBC_RPC_URL=<solana mainnet rpc> node bin/dbc-inspect.mjs <pool-address> --json   # full JSON report
 node bin/dbc-inspect.mjs --fixture fixtures/pool-8QGizJP4.json                     # no RPC needed
 node bin/dbc-inspect.mjs --fixture fixtures/not-dbc-token-mint.json                # refusal path, no RPC needed
 ```
+
+`DBC_RPC_URL` optionally overrides the public Solana mainnet RPC. The browser API keeps RPC requests server-side and
+times them out after 12 seconds. Public RPCs may rate-limit bursts. The example buttons use recorded mainnet bytes and
+work without an RPC key; live inspections and comparisons make fresh mainnet reads.
+
+The browser API exposes `GET /api/pool?address=<DBC pool>`, `GET /api/compare?left=<pool>&right=<pool>`,
+`GET /api/icelan`, and `GET /api/example?id=usdc|sol`. The comparison reports configured terms, with their quote units,
+and leaves current price, reserves, and trading activity out of the difference count. Each pool has its own observation
+slot. An unknown value stays unknown rather than being counted as a match.
+
+ICELAN's mint is `Dxpt78DTyBv3USxqsFKhQsthTF1JnjdiXQXTPLGBK9m`. The ICELAN view checks the recorded vault token
+account and authority before reporting its balance. It does not claim that ICELAN launched on Meteora DBC or use its
+reward balance as a pool reserve.
 
 Exit codes: `0` decoded, `1` not a DBC pool (wrong owner, wrong account type, truncated, or mismatched accounts), `2`
 usage or RPC error.

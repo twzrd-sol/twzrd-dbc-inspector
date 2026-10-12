@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b111c">
+  <meta name="description" content="Inspect and compare the on-chain rules of Meteora Dynamic Bonding Curve launches.">
+  <title>DBC Launch Review · TWZRD</title>
+  <link rel="icon" href="/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="DBC Launch Review home"><img src="/mark.svg" alt=""><span>TWZRD <b>/ DBC LAUNCH REVIEW</b></span></a>
+    <a class="source" href="https://github.com/twzrd-sol/twzrd-dbc-inspector" target="_blank" rel="noopener noreferrer">View source ↗</a>
+  </header>
+  <main>
+    <section class="intro">
+      <div class="eyebrow"><span class="pulse"></span> SOLANA MAINNET · METEORA DBC</div>
+      <h1>Know the launch<br><em>before you act.</em></h1>
+      <p>Read a live Dynamic Bonding Curve pool, compare its rules with another launch, or inspect ICELAN’s existing token and rewards vault. Every finding links back to an on-chain account and observation slot.</p>
+    </section>
+    <nav class="tabs" aria-label="Review mode">
+      <button type="button" class="tab active" data-view="inspect" aria-current="page">01 <strong>Inspect a pool</strong></button>
+      <button type="button" class="tab" data-view="compare">02 <strong>Compare rules</strong></button>
+      <button type="button" class="tab" data-view="icelan">03 <strong>ICELAN example</strong></button>
+    </nav>
+    <section id="inspect" class="view active" aria-labelledby="inspect-title">
+      <div class="section-head"><div><span class="kicker">POOL REVIEW</span><h2 id="inspect-title">What is live on chain?</h2></div><p>Enter a DBC pool address. A token mint or another program’s account will be refused.</p></div>
+      <form id="inspect-form" class="address-form">
+        <label for="pool-address">Meteora DBC pool address</label>
+        <div class="input-row"><input id="pool-address" name="address" spellcheck="false" autocomplete="off" placeholder="Paste a Solana pool address" required><button type="submit" class="primary">Inspect pool <span aria-hidden="true">↗</span></button></div>
+      </form>
+      <div class="example-row"><span>Try recorded mainnet bytes</span><button type="button" data-example="usdc">USDC quoted pool</button><button type="button" data-example="sol">SOL quoted pool</button></div>
+      <p class="message" id="inspect-message" role="status" aria-live="polite"></p>
+      <div id="inspect-result"></div>
+    </section>
+    <section id="compare" class="view" aria-labelledby="compare-title" hidden>
+      <div class="section-head"><div><span class="kicker">SIDE BY SIDE</span><h2 id="compare-title">Compare launch rules.</h2></div><p>Compare terms that were configured for two pools. Current reserves and trading activity are excluded.</p></div>
+      <form id="compare-form" class="compare-form">
+        <div><label for="left-address">First DBC pool</label><input id="left-address" name="left" spellcheck="false" autocomplete="off" placeholder="First pool address" required></div>
+        <div><label for="right-address">Second DBC pool</label><input id="right-address" name="right" spellcheck="false" autocomplete="off" placeholder="Second pool address" required></div>
+        <button type="submit" class="primary">Compare rules <span aria-hidden="true">↗</span></button>
+      </form>
+      <button type="button" class="sample-compare" id="sample-compare">Use the two recorded mainnet pools</button>
+      <p class="message" id="compare-message" role="status" aria-live="polite"></p>
+      <div id="compare-result"></div>
+    </section>
+    <section id="icelan" class="view" aria-labelledby="icelan-title" hidden>
+      <div class="section-head"><div><span class="kicker">TWZRD IN PRACTICE</span><h2 id="icelan-title">Inspect our own token.</h2></div><p>ICELAN is an existing SPL reward token. This view reads its mint and funded rewards vault at one mainnet slot.</p></div>
+      <button type="button" class="primary" id="inspect-icelan">Read ICELAN on chain <span aria-hidden="true">↗</span></button>
+      <p class="message" id="icelan-message" role="status" aria-live="polite"></p>
+      <div id="icelan-result"></div>
+    </section>
+    <aside class="limits"><span class="kicker">READ THE BOUNDARY</span><p>This tool explains on-chain launch mechanics. It does not rate token safety, promise returns, or judge the people behind a pool. An observation records one slot in time; inspect again for current state.</p></aside>
+  </main>
+  <footer><span>TWZRD DBC Inspector · Read-only developer tooling</span><span>Meteora SDK 1.5.13 · <a href="https://github.com/twzrd-sol/twzrd-dbc-inspector" target="_blank" rel="noopener noreferrer">Source & methods ↗</a></span></footer>
+</body>
+</html>
