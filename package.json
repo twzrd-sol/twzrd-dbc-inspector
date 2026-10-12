@@ -8,10 +8,19 @@
     "twzrd-dbc-inspect": "./bin/dbc-inspect.mjs"
   },
   "scripts": {
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs",
+    "start": "node web/server.mjs",
+    "build:site": "node scripts/build-site.mjs"
   },
   "license": "MIT",
   "dependencies": {
-    "@meteora-ag/dynamic-bonding-curve-sdk": "1.5.13"
+    "@coral-xyz/anchor": "0.31.1",
+    "@meteora-ag/dynamic-bonding-curve-sdk": "1.5.13",
+    "@solana/web3.js": "1.99.0",
+    "bn.js": "5.2.5",
+    "buffer": "6.0.3"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
   }
 }
