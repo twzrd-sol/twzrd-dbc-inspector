@@ -112,7 +112,7 @@ not a DBC pool: account owner TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA is not
 | Protocol liquidity migration fee | 20 bps on both fixture pools, from `protocol_liquidity_migration_fee_bps` |
 | Locked and LP vesting | Both fixtures are unset (reported null). Cliff duration and partner/creator LP vesting are covered by synthetic configs |
 | Linear and exponential fee schedules | The ending fee is computed by the SDK's own scheduler; tested on synthetic configs, not on a live pool |
-| Rate limiter | Parameter names follow the SDK's `FeeRateLimiter` constructor; not exercised on a live pool |
+| Rate limiter | Parameter names follow the SDK's `FeeRateLimiter` constructor; no test covers it, synthetic or live |
 | Refusals | Token mint, DBC config passed as a pool, truncated bytes, mismatched config, out-of-range enum |
 
 ## What it does not check
@@ -123,3 +123,9 @@ x402 counterparty scoring.
 
 Lookup by base mint is not implemented: that needs `getProgramAccounts`, which many RPC tiers refuse. Pass the pool
 address.
+
+## Third-party code
+
+Built on `@meteora-ag/dynamic-bonding-curve-sdk` 1.5.13 (program IDL and scheduler math), `@coral-xyz/anchor` 0.31.1,
+`@solana/web3.js` 1.99.0, `bn.js` 5.2.5 and `buffer` 6.0.3, with `esbuild` 0.28.2 for the site build. All are pinned
+exactly in `package.json`. This repository is MIT licensed.

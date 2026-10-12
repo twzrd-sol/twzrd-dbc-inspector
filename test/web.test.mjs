@@ -71,3 +71,13 @@ test("HTTP app serves the page and separates valid, invalid and ICELAN routes", 
   const icelan = await fetch(`${base}/api/icelan`);
   assert.equal((await icelan.json()).mint, ICELAN_MINT);
 });
+
+test("comparison does not call two different unrecognised quote assets the same price", () => {
+  const left = inspectAccounts(usdc), right = structuredClone(left);
+  left.pool.quote_symbol = null; right.pool.quote_symbol = null;
+  right.pool.quote_mint = "So11111111111111111111111111111111111111113";
+  const result = compareRules(left, right);
+  assert.equal(result.fields.find((field) => field.label === "Quote asset").result, "different");
+  for (const label of ["Start price", "Migration price", "Graduation quote threshold"])
+    assert.equal(result.fields.find((field) => field.label === label).result, "different", label);
+});
