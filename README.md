@@ -1,5 +1,9 @@
 # twzrd-dbc-inspector
 
+**Try it:** [DBC Launch Review](https://dbc-launch-review.grand-fern-9572.chatgpt.site/) ·
+[34-second product demo](https://github.com/twzrd-sol/twzrd-dbc-inspector/releases/download/v0.2.0/dbc-launch-review-public-demo.mp4) ·
+[2:06 TWZRD pitch](https://github.com/twzrd-sol/twzrd-dbc-inspector/releases/download/v0.2.0/dbc-launch-review-pitch.mp4)
+
 Read-only inspector for **Meteora Dynamic Bonding Curve (DBC)** pools. Give it a pool address and it decodes the pool
 and its config straight from mainnet bytes, then explains the launch in plain terms:
 
