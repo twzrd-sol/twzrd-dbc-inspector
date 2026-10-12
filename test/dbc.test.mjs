@@ -44,6 +44,93 @@ test("a real SOL-quoted pool on a customizable tier reports its custom post-migr
   assert.match(renderCard(r), /flat 250 bps/);
 });
 
+test("both real pools report the 20 bps protocol liquidity migration fee, not a zero migration fee", () => {
+  for (const fx of [SOL_POOL, USDC_POOL]) {
+    const raw = Buffer.from(fx.accounts.pool.data_b64, "base64");
+    const bps = coder.decode("VirtualPool", raw).pool_state.protocol_liquidity_migration_fee_bps;
+    assert.equal(bps, 20);
+    const r = inspectAccounts(fx);
+    assert.equal(r.migration.migration_fee.percent_of_quote, 0);
+    assert.equal(r.migration.migration_fee.protocol_liquidity_fee_bps, 20);
+    assert.equal(r.migration.migration_fee.protocol_liquidity_base_taken, "0");
+    assert.equal(r.migration.migration_fee.protocol_liquidity_quote_taken, "0");
+    const card = renderCard(r);
+    assert.match(card, /protocol liquidity migration fee 20 bps/);
+    assert.doesNotMatch(card, /migration fee 0%/);
+    assert.equal(r.migration.locked_vesting, null);
+    assert.equal(r.migration.partner_liquidity_vesting, null);
+    assert.equal(r.migration.creator_liquidity_vesting, null);
+    assert.doesNotMatch(card, /vesting/);
+  }
+});
+
+test("locked vesting keeps its cliff, including a cliff with no periods", () => {
+  // LockedVestingConfig in PoolConfig: amount u64 @296, cliff u64 @304, frequency u64 @312, periods u64 @320, unlock u64 @328.
+  const withSchedule = clone(USDC_POOL);
+  const scheduled = Buffer.from(withSchedule.accounts.config.data_b64, "base64");
+  scheduled.writeBigUInt64LE(1_000_000n, 296);
+  scheduled.writeBigUInt64LE(3600n, 304);
+  scheduled.writeBigUInt64LE(60n, 312);
+  scheduled.writeBigUInt64LE(4n, 320);
+  scheduled.writeBigUInt64LE(2_000_000n, 328);
+  const decoded = coder.decode("PoolConfig", scheduled).locked_vesting_config;
+  assert.equal(decoded.cliff_duration_from_migration_time.toString(), "3600");
+  assert.equal(decoded.number_of_period.toString(), "4");
+  withSchedule.accounts.config.data_b64 = scheduled.toString("base64");
+  const full = inspectAccounts(withSchedule);
+  assert.equal(full.migration.locked_vesting.amount_per_period, "1");
+  assert.equal(full.migration.locked_vesting.periods, "4");
+  assert.equal(full.migration.locked_vesting.frequency, "60");
+  assert.equal(full.migration.locked_vesting.cliff_duration_from_migration_time, "3600");
+  assert.equal(full.migration.locked_vesting.cliff_unlock, "2");
+  assert.match(renderCard(full), /cliff 3600/);
+
+  const cliffOnly = clone(USDC_POOL);
+  const cliff = Buffer.from(cliffOnly.accounts.config.data_b64, "base64");
+  cliff.writeBigUInt64LE(86400n, 304);
+  const cliffDecoded = coder.decode("PoolConfig", cliff).locked_vesting_config;
+  assert.equal(cliffDecoded.number_of_period.toString(), "0");
+  assert.equal(cliffDecoded.cliff_unlock_amount.toString(), "0");
+  cliffOnly.accounts.config.data_b64 = cliff.toString("base64");
+  const only = inspectAccounts(cliffOnly);
+  assert.equal(only.migration.locked_vesting.cliff_duration_from_migration_time, "86400");
+  assert.equal(only.migration.locked_vesting.periods, "0");
+  assert.match(renderCard(only), /cliff 86400/);
+});
+
+test("partner and creator liquidity vesting surface when percentage or initialized is set", () => {
+  // LiquidityVestingInfo is 16 bytes: partner @184, creator @200.
+  // init u8, percentage u8, pad 2, bps u16, periods u16, frequency u32, cliff u32.
+  const fx = clone(USDC_POOL);
+  const raw = Buffer.from(fx.accounts.config.data_b64, "base64");
+  raw[185] = 25;
+  raw.writeUInt16LE(500, 188);
+  raw.writeUInt16LE(10, 190);
+  raw.writeUInt32LE(3600, 192);
+  raw.writeUInt32LE(7200, 196);
+  raw[200] = 1;
+  const partner = coder.decode("PoolConfig", raw).partner_liquidity_vesting_info;
+  const creator = coder.decode("PoolConfig", raw).creator_liquidity_vesting_info;
+  assert.equal(partner.is_initialized, 0);
+  assert.equal(partner.vesting_percentage, 25);
+  assert.equal(partner.cliff_duration_from_migration_time, 7200);
+  assert.equal(creator.is_initialized, 1);
+  assert.equal(creator.vesting_percentage, 0);
+  fx.accounts.config.data_b64 = raw.toString("base64");
+  const r = inspectAccounts(fx);
+  assert.equal(r.migration.partner_liquidity_vesting.initialized, false);
+  assert.equal(r.migration.partner_liquidity_vesting.vesting_percentage, 25);
+  assert.equal(r.migration.partner_liquidity_vesting.bps_per_period, 500);
+  assert.equal(r.migration.partner_liquidity_vesting.number_of_periods, 10);
+  assert.equal(r.migration.partner_liquidity_vesting.frequency, 3600);
+  assert.equal(r.migration.partner_liquidity_vesting.cliff_duration_from_migration_time, 7200);
+  assert.equal(r.migration.creator_liquidity_vesting.initialized, true);
+  assert.equal(r.migration.creator_liquidity_vesting.vesting_percentage, 0);
+  const card = renderCard(r);
+  assert.match(card, /partner LP uninitialized, 25%/);
+  assert.match(card, /creator LP initialized, 0%/);
+});
+
 test("a token mint is refused as not a DBC pool", () => {
   const fx = clone(USDC_POOL);
   fx.accounts.pool = fx.accounts.quote_mint;

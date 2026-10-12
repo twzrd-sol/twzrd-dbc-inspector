@@ -33,6 +33,9 @@ test("comparison labels quote units and excludes mutable price and reserves", ()
   assert.equal(result.fields.find((field) => field.label === "Quote asset").result, "different");
   assert.match(result.fields.find((field) => field.label === "Start price").left, /USDC$/);
   assert.match(result.fields.find((field) => field.label === "Start price").right, /SOL$/);
+  assert.equal(result.fields.find((field) => field.label === "Protocol liquidity migration fee (bps)").left, 20);
+  assert.equal(result.fields.find((field) => field.label === "Protocol liquidity migration fee (bps)").result, "same");
+  assert.equal(result.fields.find((field) => field.label === "Partner LP vesting").left, "none");
   assert.ok(!result.fields.some((field) => /current price|reserve/i.test(field.label)));
 });
 
