@@ -1,0 +1,17 @@
+{
+  "name": "twzrd-dbc-inspector",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Read-only inspector for Meteora Dynamic Bonding Curve (DBC) pools: decodes the pool and its config, explains curve, fees, quote asset, graduation and migration, and flags anything it cannot decode.",
+  "type": "module",
+  "bin": {
+    "twzrd-dbc-inspect": "./bin/dbc-inspect.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@meteora-ag/dynamic-bonding-curve-sdk": "1.5.13"
+  }
+}

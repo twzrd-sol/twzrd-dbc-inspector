@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 180" role="img" aria-labelledby="title desc">
+  <title id="title">TWZRD DBC Inspector</title>
+  <desc id="desc">A curve crossing a launch threshold, paired with the TWZRD DBC Inspector wordmark.</desc>
+  <defs>
+    <linearGradient id="curve" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#54e0c2"/>
+      <stop offset="1" stop-color="#91a7ff"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="164" height="164" rx="36" fill="#101827"/>
+  <path d="M38 130h104M43 125c29-1 32-4 46-23s20-40 50-53" fill="none" stroke="url(#curve)" stroke-linecap="round" stroke-width="10"/>
+  <path d="M118 49h23v23" fill="none" stroke="#f0bb65" stroke-linecap="round" stroke-linejoin="round" stroke-width="7"/>
+  <circle cx="140" cy="49" r="7" fill="#f0bb65"/>
+  <text x="204" y="82" fill="#111827" font-family="Inter,Arial,sans-serif" font-size="30" font-weight="800" letter-spacing="2">TWZRD</text>
+  <text x="204" y="124" fill="#334155" font-family="Inter,Arial,sans-serif" font-size="22" font-weight="500" letter-spacing="1.4">DBC INSPECTOR</text>
+</svg>

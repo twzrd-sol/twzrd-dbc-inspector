@@ -1,0 +1,15 @@
+{
+  "captured_at_utc": "2026-10-12T03:49:51.727Z",
+  "slot": 455904141,
+  "commitment": "finalized",
+  "endpoint_label": "mainnet-rpc",
+  "pool_address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  "accounts": {
+    "pool": {
+      "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "lamports": 549535699757,
+      "data_b64": "AQAAAJj+huiNm+Lqi8HMpIeLKYjCQPUrhCS/tA7Rot3LXhmbt+CE6twSHAAGAQEAAABicKqKWcWUBbRShshncubNEm6bil06OFNtN/e0FOi2Zw=="
+    }
+  }
+}
