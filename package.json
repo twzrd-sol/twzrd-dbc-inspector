@@ -16,7 +16,7 @@
   "dependencies": {
     "@coral-xyz/anchor": "0.31.1",
     "@meteora-ag/dynamic-bonding-curve-sdk": "1.5.13",
-    "@solana/web3.js": "1.99.0",
+    "@solana/web3.js": "3.0.2",
     "bn.js": "5.2.5",
     "buffer": "6.0.3"
   },
